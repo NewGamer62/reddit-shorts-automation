@@ -1,0 +1,31 @@
+# Python & Environnement virtuel
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Secrets, identifiants et configuration locale
+.env
+client_secrets.json
+token.pickle
+config.json
+
+# Assets lourds et fichiers temporaires de génération
+assets/gameplay/*.mp4
+assets/audio/*.mp3
+assets/audio/reddit_card_*.png
+assets/temp/*
+!assets/temp/.gitkeep
+!assets/gameplay/.gitkeep
+
+# Sorties de rendu vidéo & métadonnées
+output/*.mp4
+output/*.json
+!output/.gitkeep
+
+# Fichiers système
+desktop.ini
+Thumbs.db
+.DS_Store

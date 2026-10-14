@@ -1,0 +1,22 @@
+# --- Core Engine ---
+requests
+python-dotenv
+schedule
+
+# --- Reddit & Content ---
+# (Utilise uniquement requests pour le JSON)
+
+# --- Voice & AI ---
+elevenlabs
+openai-whisper
+setuptools-rust
+
+# --- Video Engine ---
+moviepy==1.0.3
+playwright
+
+# --- Google & YouTube API ---
+google-api-python-client
+google-auth-oauthlib
+google-auth-httplib2
+google-auth
