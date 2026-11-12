@@ -1,145 +1,193 @@
-# 🎬 Reddit Shorts Automation Pipeline
+> 🌐 **Language / Langue :** **English** | [Français](README.fr.md)
+
+# 🎬 Reddit Shorts Automation Pipeline & Agent Skill
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-Headless_Browser-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 [![Whisper](https://img.shields.io/badge/OpenAI-Whisper-412991?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/openai/whisper)
-[![ElevenLabs](https://img.shields.io/badge/ElevenLabs-TTS_Engine-black?style=for-the-badge)](https://elevenlabs.io/)
 [![MoviePy](https://img.shields.io/badge/MoviePy-Video_Assembly-blue?style=for-the-badge)](https://zulko.github.io/moviepy/)
+[![edge-tts](https://img.shields.io/badge/edge--tts-Zero--Friction_Free_TTS-brightgreen?style=for-the-badge)](https://github.com/rany2/edge-tts)
+[![ElevenLabs](https://img.shields.io/badge/ElevenLabs-Neural_TTS-black?style=for-the-badge)](https://elevenlabs.io/)
+[![Agensi Skill](https://img.shields.io/badge/Agensi-Agent_Skill-9cf?style=for-the-badge)](SKILL.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-Pipeline automatisé de production et publication de vidéos courtes (YouTube Shorts / TikTok / Reels) à partir d'histoires Reddit virales. Le bot orchestre l'extraction du contenu, la synthèse vocale neuronale, le rendu graphique de cartes Reddit, le montage vidéo dynamique avec synchronisation mot-à-mot, et l'upload automatisé via l'API YouTube.
+An open-source, automated end-to-end video pipeline that turns viral Reddit threads into monetizable 9:16 vertical shorts (YouTube Shorts, TikTok, Instagram Reels). Features headless DOM card rendering, dual-engine voiceover (ElevenLabs & free `edge-tts`), frame-accurate Whisper karaoke subtitles, 60 FPS video assembly, zero-friction local execution, and native Agensi agent skill packaging.
 
 ---
 
-## 📸 Aperçu du rendu visuel
+## 📸 Visual Demo
 
 <div align="center">
-  <img src="docs/preview.png" alt="Reddit Card Preview" width="550" />
-  <p><em>Exemple de carte Reddit générée dynamiquement via Playwright (rendu WebKit/Chromium haute résolution avec transparence).</em></p>
+  <img src="docs/demo.gif" alt="Reddit Shorts Automation Pipeline Demo" width="320" />
+  <p><em>End-to-end automated generation: Reddit thread scraping → Headless DOM card capture → Dual TTS audio synthesis → Whisper karaoke word-level sync → 60 FPS vertical video composite.</em></p>
 </div>
 
 ---
 
-## ⚡ Pitch Fonctionnel & Valeur Ajoutée
+## ⚡ Problem & Value Proposition
 
-La création manuelle de vidéos courtes ("storytime") est chronophage : recherche de récits sans contenu sensible, enregistrement de voix, capture de cartes Reddit, synchronisation des sous-titres karaoké, assemblage vidéo sur fond de gameplay et mise en ligne sur YouTube Studio.
+Manual creation of faceless "storytime" videos is tedious and time-consuming, requiring 45 to 90 minutes per video across research, voice recording, card graphic design, subtitle timing, gameplay background slicing, and upload publishing.
 
-**Ce projet résout l'intégralité de la chaîne sans intervention humaine :**
-- 🔍 **Scraping & Modération intelligente** : Récupération des posts les plus captivants (`r/AskReddit`, `r/AITAH`, `r/TrueOffMyChest`), filtrage des sujets politiques/inappropriés via une liste noire intégrée et nettoyage regex.
-- 🎙️ **Génération vocale réaliste (TTS)** : Conversion du texte en parole avec ElevenLabs (voix masculines/féminines adaptées).
-- 🎨 **Moteur de cartes Reddit Headless** : Rendu HTML5/CSS3 fidèle à l'interface moderne Reddit capturé sans arrière-plan via Playwright.
-- ✂️ **Montage & Synchronisation mot-à-mot** : Découpage aléatoire de fonds de gameplay verticaux (1080x1920 @ 60 FPS), mixage de la musique d'ambiance et sous-titrage synchronisé à la milliseconde grâce à **OpenAI Whisper**.
-- 🚀 **SEO & Publication automatique** : Génération de métadonnées optimisées (titres accrocheurs, hashtags, tags ciblés) et publication directe sur YouTube via l'API v3 avec jeton OAuth persistant.
-- 🔔 **Alertes Discord** : Notification instantanée avec lien de la vidéo dès que l'upload est confirmé.
+**This project automates 100% of the production chain with zero human intervention:**
+- 🔍 **Intelligent Scraping & Moderation**: Fetches viral threads from `r/AskReddit`, `r/AITAH`, and `r/TrueOffMyChest`, automatically sanitizes text, and eliminates NSFW/sensitive content via a built-in regex blacklist.
+- 🎨 **Headless Pixel-Perfect Reddit Cards**: Renders modern dark-mode Reddit cards in Chromium via Playwright and extracts transparent PNG overlays.
+- 🎙️ **Dual-Engine Speech Synthesis**: Supports high-fidelity ElevenLabs neural voices or zero-friction, 100% free Microsoft Edge Neural voices (`edge-tts`).
+- 📝 **Frame-Accurate Karaoke Subtitles**: Uses OpenAI Whisper (`base`) to align timestamps down to the millisecond, rendering bold karaoke-style subtitles over 9:16 vertical gameplay.
+- ⚡ **Zero-Friction Local Execution**: Run tests and generate complete MP4 videos locally in seconds without any API keys or credentials.
+- 🚀 **SEO & Automated Distribution**: Auto-generates high-CTR titles, descriptions, and hashtags, with direct YouTube Data API v3 upload and instant Discord webhook alerts.
+- 🤖 **Agent Skill Ready**: Packaged according to Agensi standards with `SKILL.md` for seamless execution by Claude Code, Cursor, and Codex agents.
 
 ---
 
-## 🏗️ Architecture & Flux d'exécution
+## 🏗️ Architecture & Execution Flow
 
 ```mermaid
 flowchart TD
-    A[Reddit API / JSON] -->|Filtrage & Nettoyage| B[ScriptGenerator]
-    B -->|Script textuel| C[TTSEngine ElevenLabs]
-    B -->|Titre & Auteur| D[CardGenerator Playwright]
-    C -->|Fichier Audio MP3| E[Whisper STT]
-    D -->|Carte PNG transparente| F[VideoEngine MoviePy]
-    E -->|Timestamps mot-à-mot| F
-    G[Assets Gameplay & Music] --> F
-    F -->|Vidéo finale MP4 1080x1920| H[YouTubeUploader API v3]
-    B -->|Génération SEO| I[MetadataGenerator]
-    I --> H
-    H -->|URL de publication| J[DiscordSender Webhook]
+    subgraph Input_Layer [1. Content Sourcing]
+        A[Reddit Public API] -->|Filter & Sanitize| B[ScriptGenerator]
+        A2[Custom Text / Story] --> B
+        A3[Pre-recorded Audio] --> E[Audio Stream]
+    end
+
+    subgraph Audio_Visual_Generation [2. Audio & Visual Synthesis]
+        B -->|Story Text| C1{TTS Engine Selection}
+        C1 -->|Cloud API Key| C2[ElevenLabs API v2]
+        C1 -->|Free Local Fallback| C3[edge-tts Microsoft Neural]
+        C2 --> E
+        C3 --> E
+        B -->|Title & Author| D[CardGenerator Playwright]
+        D -->|Transparent PNG| F[VideoEngine MoviePy]
+    end
+
+    subgraph Assembly_Engine [3. Assembly & Transcription]
+        E -->|MP3 Audio Stream| W[Whisper STT Model]
+        W -->|Word-level Timestamps| F
+        G[Background Gameplay 60FPS] --> F
+        M[Background Music] --> F
+        F -->|Render 1080x1920 MP4| Out[output/final_video.mp4]
+    end
+
+    subgraph Publishing_Distribution [4. Distribution & Alerts]
+        B -->|SEO Metadata| Meta[MetadataGenerator]
+        Out --> Mode{Execution Mode}
+        Mode -->|--local| Done[Local MP4 Ready]
+        Mode -->|Production| YT[YouTube Data API v3]
+        Meta --> YT
+        YT -->|Video URL| Disc[Discord Webhook Sender]
+    end
 ```
 
 ---
 
-## 🛠️ Stack Technique Détaillée
+## 🛠️ Technical Stack
 
-| Domaine | Technologie | Description |
+| Domain | Technology | Role & Description |
 | :--- | :--- | :--- |
-| **Langage** | Python 3.10+ | Moteur principal orienté batch |
-| **Transcription & STT** | OpenAI Whisper (`base`) | Alignement temporel des mots pour sous-titrage dynamique |
-| **Synthèse Vocale (TTS)** | ElevenLabs API v2 | Rendu vocal haute fidélité (`eleven_multilingual_v2`) |
-| **Génération Graphique** | Playwright (Chromium Headless) | Capture des cartes Reddit au format PNG transparent |
-| **Montage Vidéo** | MoviePy + ImageMagick | Assemblage 9:16 vertical 1080x1920, mixage audio & crop central |
-| **Publication & API** | Google API Client (YouTube Data v3) | Authentification OAuth 2.0 et upload de vidéos courtes |
-| **Notifications** | Discord Webhooks | Alertes de publication avec tags |
-| **Planification** | Schedule / Script batch | Exécution automatisée périodique |
+| **Language** | Python 3.10+ | Batch orchestration engine |
+| **Headless Rendering** | Playwright (Chromium) | Dynamic HTML5/CSS3 Reddit card generation with transparent alpha channel |
+| **Speech-to-Text (STT)** | OpenAI Whisper (`base`) | Sub-second word-level timestamp alignment for dynamic karaoke subtitles |
+| **Voice Synthesis (TTS)** | ElevenLabs & edge-tts | Dual engine: high-tier neural voices or free unlimited Microsoft Edge TTS |
+| **Video Compositing** | MoviePy + ImageMagick | Vertical 9:16 (1080x1920) 60 FPS assembly, smart center-cropping & audio mixing |
+| **Distribution** | Google YouTube Data API v3 | Automated OAuth 2.0 video upload with automated tags, categories & descriptions |
+| **Monitoring** | Discord Webhooks | Real-time execution and publication notifications |
+| **Agent Packaging** | Agensi `SKILL.md` | Standardized agent interface for Claude Code, Cursor, Codex, and Antigravity |
 
 ---
 
-## 🚀 Démarrage Rapide
+## 🚀 Quickstart
 
-### 1. Prérequis Système
+### 1. Prerequisites
 - **Python 3.10+**
-- **ImageMagick** (nécessaire pour MoviePy et le rendu des sous-titres) : [Télécharger ImageMagick](https://imagemagick.org/)
+- **FFmpeg** and **ImageMagick** installed on system PATH.
 
-### 2. Installation en 3 commandes
-
-```bash
-# 1. Cloner le dépôt et entrer dans le dossier
-git clone https://github.com/NewGamer62/reddit-shorts-automation.git
-cd reddit-shorts-automation
-
-# 2. Créer l'environnement virtuel et installer les dépendances
-python -m venv .venv
-source .venv/bin/activate  # Sur Windows : .venv\Scripts\activate
-pip install -r requirements.txt
-playwright install chromium
-```
-
-### 3. Configuration des variables d'environnement
-
-Copiez le fichier de modèle et remplissez vos clés API :
+### 2. Installation in 2 Commands
 
 ```bash
-cp .env.example .env
+# Clone the repository
+git clone https://github.com/NewGamer62/reddit-shorts-automation.git && cd reddit-shorts-automation
+
+# Install dependencies and headless browser
+pip install -r requirements.txt && playwright install chromium
 ```
 
-Éditez `.env` :
-```ini
-ELEVENLABS_API_KEY="votre_cle_api_elevenlabs"
-DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
-```
-
-> **Note pour l'API YouTube :** Déposez votre fichier `client_secrets.json` issu de la [Google Cloud Console](https://console.cloud.google.com/) à la racine du projet. Lors du premier lancement, un onglet de navigateur s'ouvrira pour autoriser l'upload et générera `token.pickle`.
-
-### 4. Lancement du Pipeline
+### 3. Generate a Video in Zero-Friction Local Mode (No API keys needed!)
 
 ```bash
-python src/main.py
+# Run local generation with free edge-tts fallback:
+python src/main.py --local
+
+# Or generate from an existing audio file:
+python src/main.py --local --audio assets/audio/voiceover_AITAH.mp3
 ```
-*(Ou double-cliquez sur `Start.bat` sur Windows).*
+Your compiled video is saved immediately to `output/final_video_AITAH.mp4`.
 
 ---
 
-## 📁 Organisation du Projet
+## ⚙️ Production Configuration (Optional)
+
+To enable ElevenLabs neural voices, YouTube automated uploads, and Discord notifications:
+
+1. Copy the environment template:
+   ```bash
+   cp .env.example .env
+   ```
+2. Fill in your credentials in `.env`:
+   ```ini
+   ELEVENLABS_API_KEY="your_elevenlabs_api_key"
+   DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
+   ```
+3. Place your Google Cloud `client_secrets.json` at the project root for YouTube uploads.
+4. Run in production mode:
+   ```bash
+   python src/main.py
+   ```
+
+---
+
+## 🤖 AI Agent & Agensi Skill Integration
+
+This repository is a first-class Agent Skill. AI coding assistants (Claude Code, Cursor, Codex, Agensi) can autonomously operate the pipeline via `SKILL.md`:
+
+```bash
+# Example agent prompt:
+"Generate a 9:16 YouTube Short from r/AskReddit in local mode using edge-tts."
+```
+
+Refer to [SKILL.md](SKILL.md) for full input/output schemas and agent runbooks.
+
+---
+
+## 📁 Repository Structure
 
 ```text
 ├── assets/
-│   ├── fonts/           # Polices personnalisées pour les sous-titres
-│   ├── gameplay/        # Vidéos de fond libres de droits (Minecraft, Subway Surfers, etc.)
-│   └── music/           # Bandes-son d'ambiance classées par type d'histoire
-├── docs/                # Aperçus et documentation
-├── output/              # Fichiers MP4 compilés et métadonnées JSON
+│   ├── audio/           # Sample voiceovers and generated Reddit cards
+│   ├── fonts/           # Custom typography (LEMONMILK-Bold.otf)
+│   ├── gameplay/        # 60 FPS copyright-free background gameplay
+│   └── music/           # Ambient mood soundtracks (drama, lofi, confession)
+├── docs/                # Architecture diagrams, preview images, and demo.gif
+├── output/              # Rendered 1080x1920 MP4 shorts and metadata JSON
+├── scripts/             # Utility and automation scripts (demo GIF, GitHub metadata)
 ├── src/
-│   ├── card_gen_pro.py     # Générateur de cartes Reddit via Playwright
-│   ├── discord_sender.py   # Envoi des webhooks Discord
-│   ├── main.py             # Orchestrateur central de la pipeline
-│   ├── metadata_gen.py     # Génération des tags SEO, titres et descriptions
-│   ├── script_gen.py       # Récupération et nettoyage des posts Reddit
-│   ├── tts_engine.py       # Wrapper de synthèse vocale ElevenLabs
-│   ├── video_engine.py     # Moteur de montage vidéo, crop vertical et Whisper
-│   └── youtube_uploader.py # Upload OAuth vers l'API YouTube v3
-├── .env.example         # Modèle des variables d'environnement
-├── .gitignore           # Exclusion stricte des vidéos lourdes et secrets
-├── requirements.txt     # Dépendances Python du projet
-└── Start.bat            # Lanceur rapide Windows
+│   ├── card_gen_pro.py     # Playwright Reddit card DOM snapshot engine
+│   ├── discord_sender.py   # Discord webhook notification client
+│   ├── main.py             # CLI orchestrator with zero-friction local mode
+│   ├── metadata_gen.py     # High-CTR SEO tags, titles, and descriptions generator
+│   ├── script_gen.py       # Reddit scraper with content moderation blacklist
+│   ├── tts_engine.py       # Dual TTS engine (ElevenLabs + edge-tts fallback)
+│   ├── video_engine.py     # MoviePy vertical video assembly & Whisper subtitles
+│   └── youtube_uploader.py # YouTube Data API v3 OAuth uploader
+├── .env.example         # Environment variable template
+├── requirements.txt     # Python package requirements
+├── SKILL.md             # Agensi and agent-skills specification and runbooks
+├── README.md            # English portfolio documentation (this file)
+└── README.fr.md         # Documentation originale en français
 ```
 
 ---
 
-## 🛡️ Licence & Contribution
+## 🛡️ License & Author
 
-Projet distribué sous licence [MIT](LICENSE). Développé par **[Noa Gaillard](https://github.com/NewGamer62)**.
-Les contributions et suggestions d'améliorations sont les bienvenues via Pull Request !
+Distributed under the **[MIT License](LICENSE)**.  
+Created by **[Noa Gaillard](https://github.com/NewGamer62)**.  
+Feedback, issues, and Pull Requests are warmly welcome!

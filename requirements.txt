@@ -8,6 +8,7 @@ schedule
 
 # --- Voice & AI ---
 elevenlabs
+edge-tts>=7.0.0
 openai-whisper
 setuptools-rust
 
