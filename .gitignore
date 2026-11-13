@@ -25,7 +25,9 @@ output/*.mp4
 output/*.json
 !output/.gitkeep
 
-# Fichiers système
+# Archives & builds locaux
+*.zip
+
 desktop.ini
 Thumbs.db
 .DS_Store
